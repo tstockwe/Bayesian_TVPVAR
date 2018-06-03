@@ -9,27 +9,135 @@ output: ioslides_presentation
 knitr::opts_chunk$set(echo = FALSE)
 ```
 
-## R Markdown
+## Normal VAR Model
 
-This is an R Markdown presentation. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+- The normal VAR is expressed in this way:
+$$Y_t =  Y_{t-1} \beta + \epsilon_t$$
+- where:
+    + $Y_t$ is a Mx1 vector of our data
+    + $Y_{t-1}$ is a Mxk matrix containing exogenous explanatory variables (lagged values of Y and the constant term)
+    + $\beta$ is a Mx1 vector of parameters to be estimated
+        + Assumed to be constant over time
+    + $\epsilon_t$ is a Mx1 vector of disturbance terms
+        + Assume: $\epsilon_t \sim N(0,\Sigma)$
+        + $\Sigma$ is assumed constant over time
+        
+## Shortcomings of a VAR Model
 
-When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document.
+- In practice, the VAR model may not be very practical
+- Its restrictive in two main ways:
+    + The parameters of the model may vary over time
+    + The variance of the exogenous shocks may vary over time
+- Example: US Monetary Policy and the high inflation and low growth in the 1970's
+    + Changing parameters: The Fed may have changed its response to inflation during this time
+    + Changing variance: The '70's had high volatility whereas later policy makers experienced the Great Moderation
+    
+##  The TVP-VAR Model
 
-## Slide with Bullets
+- We can use the TVP-VAR to address both of these issues
+- TVP: Time Varying Parameters
+- We can allow the parameters of the model to change over time or the variance of the disturbance term (or both)
+- We will assume that errors are homoskedastic for simplicity and only focus on the time varying parameters
 
-- Bullet 1
-- Bullet 2
-- Bullet 3
+##  The TVP-VAR Model
 
-## Slide with R Output
+- The TVP-VAR is expressed in this way:
+$$ Y_t =  Y_{t-1} \beta_t + \epsilon_t $$
+- We let the parameters evolve according to an AR(1) process:
+$$ \beta_t = \beta_{t-1} + u_t $$
+- All the variables have the same definitions that we saw in the normal VAR case
+- The new variable is $u_t \sim N(0,Q)$
+- Do you notice anything familiar about the setup of this model?
 
-```{r cars, echo = TRUE}
-summary(cars)
-```
+## The TVP-VAR Model
 
-## Slide with Plot
+- This is a state-space model:
+    + The measurement equation is: $Y_t =  Y_{t-1} \beta_t + \epsilon_t$
+    + The transition equation is: $\beta_t = \beta_{t-1} + u_t$
+- When we think of Bayesian estimation of this model, we can use the same techniques that are used in Bayesian estimation of state-space models
 
-```{r pressure}
-plot(pressure)
-```
+## Bayesian Estimation
 
+- Our parameters for this model: $\Sigma$, Q
+    + Well call these $\theta$
+- Unknown objects of interest:
+    + $\theta$
+    + $\beta_t$
+- Our goal is to sample from $P(\theta,\tilde{\beta}_T|\tilde{Y}_T)$
+
+## MCMC Algorithm
+
+- We will use a 3-step Gibbs sampler to accomplish our goal:
+    + Step 1: Draw $\Sigma$ from $P(\Sigma|\tilde{\beta}_T^{g-1},\tilde{Y}_T)$, gives us $\Sigma^g$
+    + Step 2: Draw Q from $P(Q|\tilde{\beta}_T^{g-1},\tilde{Y}_T)$, gives us $Q^g$
+    + Step 3: Draw $\tilde{\beta}_T$ from $P(\tilde{\beta}_T|\theta^g,\tilde{Y}_T)$, gives us $\tilde{\beta}_T^g$
+- The process for steps 1 and 2 are laid out in Koop and Korobilis (2014)
+- The process for step 3 follows Carter and Kohn (1994)
+
+## Step 1
+- Sampling $P(\theta|\tilde{\beta}_T^{g-1},\tilde{Y}_T)$
+- For $\Sigma^{-1}$, our prior is a $Wishart(S,v)$
+- After combining this with the marginal likelihood, the conditional posterior is:
+$$P(\Sigma^{-1}|\tilde{\beta}_T,\tilde{Y}_T) \sim Wishart(\bar{S}^{-1},\bar{v})$$ 
+			$$\bar{v} = v + T$$
+			$$\bar{S}^{-1} = S + \sum\limits_{t=2}^{T} (Y_t-Y_{t-1}^{'}\beta_t)(Y_t-Y_{t-1}^{'}\beta_t)'$$
+    + "v" and "S" are hyperparameters
+    
+## Step 2
+
+- Sampling $P(\theta|\tilde{\beta}_T^{g-1},\tilde{Y}_T)$
+- For $Q^{-1}$, our prior is also a $Wishart(S_Q,v_Q)$
+- After combining this with the marginal likelihood, the conditional posterior is:
+$$P(Q^{-1}|\tilde{\beta}_T,\tilde{Y}_T) \sim Wishart(\bar{S}_Q^{-1},\bar{v}_Q)$$ 
+			$$\bar{v}_Q = v_Q + T$$
+			$$\bar{S}_Q^{-1} = S_Q + \sum\limits_{t=1}^{T} (\beta_{t+1}-I\beta_t)(\beta_{t+1}-I\beta_t)'$$
+    + "$v_Q$" and "$S_Q$" are hyperparameters
+    
+## Step 3
+
+- Sampling $P(\tilde{\beta}_T|\theta^g,\tilde{Y}_T)$
+- To begin: 
+$$ P(\tilde{\beta}_T|\theta,\tilde{Y}_T) = P(\beta_1,...,\beta_T|\theta,\tilde{Y}_T) $$
+	$$ = P(\beta_1|\beta_2,...,\beta_T,\theta,\tilde{Y}_T) ... P(\beta_{T-1}|\beta_T,\theta,\tilde{Y}_T)P(\beta_T|\theta,\tilde{Y}_T) $$
+
+## Step 3
+
+- Recall that $\beta_t$ is an AR(1) process with an iid disturbance vector, therefore:
+    + Given $\beta_{t+1}$, the pdf of $\beta_t$ does not depend on $\beta_{t+2},...,\beta_T$
+    + Conditional on $\tilde{Y}_T$, then $Y_{t+1},...,Y_T$ contains no additional information about $\beta_t$
+- This means that:
+$$P(\tilde{\beta}_T|\theta,\tilde{Y}_T)=$$ $$P(\beta_1|\beta_2,\theta,\tilde{Y}_1)...P(\beta_{T-1}|\beta_T,\theta,\tilde{Y}_{T-1})P(\beta_T|\theta,\tilde{Y}_T)$$
+
+##  Step 3
+
+- This means we can draw from $P(\tilde{\beta}_T|\theta,\tilde{Y}_T)$ as follows:
+    + Step 1: Draw $\beta_T$ from $P(\beta_T|\theta,\tilde{Y}_T)$
+    + Step 2: Draw $\beta_{T-1}$ from $P(\beta_{T-1}|\beta_T,\theta,\tilde{Y}_{T-1})$
+    + and so forth ...
+    + Step T: Draw $\beta_1$ from $P(\beta_1|\beta_2,\theta,\tilde{Y}_1)$
+- If we need it, we can also draw $\beta_0$ from $P(\beta_0|\beta_1,\theta,\tilde{Y}_0)$
+
+## Step 3
+- How do we take these draws?
+- From our time-series class, we know that:
+$$ P(\beta_t|\theta,\tilde{Y}_t)=N(\beta_{tt},V_{tt}) $$
+		$$ \beta_{tt}=E(\beta_t|\theta,\tilde{Y}_t) $$
+		$$ V_{tt}=Var(\beta_t|\theta,\tilde{Y}_t) $$
+- $\beta_{tt}$ and $V_{tt}$ we get from the Kalman Filter
+    + Therefore, we can get $\beta_{TT}$ and $V_{TT}$ from the final step of the Kalman Filter and then draw $X_T$ from $N(\beta_{TT},V_{TT})$
+
+## Step 3
+
+- What about the rest of the steps 2-T?
+$$ P(\beta_t|\beta_{t+1},\theta,\tilde{Y}_t)=N(E(\beta_t|\beta_{t+1},\theta,\tilde{Y}_t),Var(\beta_t|\beta_{t+1},\theta,\tilde{Y}_t)) $$
+	$$ E(\beta_t|\beta_{t+1},\theta,\tilde{Y}_t)=\beta_{tt}+V_{tt}(V_{tt}+Q)^{-1}(\beta_{t+1}-\beta_{tt}) $$
+	$$ Var(\beta_t|\beta_{t+1},\theta,\tilde{Y}_t)=V_{tt}-V_{tt}(V_{tt}+Q)^{-1} $$
+	
+## Other Items fof Note
+
+- Training Sample
+    + Designating an early part of your data to estimate what your priors should be
+- Minnesota Prior
+    + Rather than have the TE be AR(1), we can combine it with the Minnesota Prior:
+$$ \beta_t=A_0\beta_{t-1} + (I-A_0)\bar{\beta}_0+u_t $$
+    + "A" is something we can set or we could add another block into our Gibbs sampler

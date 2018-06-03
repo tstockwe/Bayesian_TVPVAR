@@ -97,35 +97,199 @@
           </hgroup>
   </slide>
 
-<slide class=""><hgroup><h2>R Markdown</h2></hgroup><article  id="r-markdown">
-
-<p>This is an R Markdown presentation. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <a href='http://rmarkdown.rstudio.com' title=''>http://rmarkdown.rstudio.com</a>.</p>
-
-<p>When you click the <strong>Knit</strong> button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document.</p>
-
-</article></slide><slide class=""><hgroup><h2>Slide with Bullets</h2></hgroup><article  id="slide-with-bullets">
+<slide class=""><hgroup><h2>Normal VAR Model</h2></hgroup><article  id="normal-var-model">
 
 <ul>
-<li>Bullet 1</li>
-<li>Bullet 2</li>
-<li>Bullet 3</li>
+<li>The normal VAR is expressed in this way: \[Y_t =  Y_{t-1} \beta + \epsilon_t\]</li>
+<li>where:
+
+<ul>
+<li>\(Y_t\) is a Mx1 vector of our data</li>
+<li>\(Y_{t-1}\) is a Mxk matrix containing exogenous explanatory variables (lagged values of Y and the constant term)</li>
+<li>\(\beta\) is a Mx1 vector of parameters to be estimated
+
+<ul>
+<li>Assumed to be constant over time</li>
+</ul></li>
+<li>\(\epsilon_t\) is a Mx1 vector of disturbance terms
+
+<ul>
+<li>Assume: \(\epsilon_t \sim N(0,\Sigma)\)</li>
+<li>\(\Sigma\) is assumed constant over time</li>
+</ul></li>
+</ul></li>
 </ul>
 
-</article></slide><slide class=""><hgroup><h2>Slide with R Output</h2></hgroup><article  id="slide-with-r-output">
+</article></slide><slide class=""><hgroup><h2>Shortcomings of a VAR Model</h2></hgroup><article  id="shortcomings-of-a-var-model">
 
-<pre class = 'prettyprint lang-r'>summary(cars)</pre>
+<ul>
+<li>In practice, the VAR model may not be very practical</li>
+<li>Its restrictive in two main ways:
 
-<pre >##      speed           dist       
-##  Min.   : 4.0   Min.   :  2.00  
-##  1st Qu.:12.0   1st Qu.: 26.00  
-##  Median :15.0   Median : 36.00  
-##  Mean   :15.4   Mean   : 42.98  
-##  3rd Qu.:19.0   3rd Qu.: 56.00  
-##  Max.   :25.0   Max.   :120.00</pre>
+<ul>
+<li>The parameters of the model may vary over time</li>
+<li>The variance of the exogenous shocks may vary over time</li>
+</ul></li>
+<li>Example: US Monetary Policy and the high inflation and low growth in the 1970&#39;s
 
-</article></slide><slide class=""><hgroup><h2>Slide with Plot</h2></hgroup><article  id="slide-with-plot">
+<ul>
+<li>Changing parameters: The Fed may have changed its response to inflation during this time</li>
+<li>Changing variance: The &#39;70&#39;s had high volatility whereas later policy makers experienced the Great Moderation</li>
+</ul></li>
+</ul>
 
-<p><img src="data:image/png;base64,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" width="720" /></p></article></slide>
+</article></slide><slide class=""><hgroup><h2>The TVP-VAR Model</h2></hgroup><article  id="the-tvp-var-model">
+
+<ul>
+<li>We can use the TVP-VAR to address both of these issues</li>
+<li>TVP: Time Varying Parameters</li>
+<li>We can allow the parameters of the model to change over time or the variance of the disturbance term (or both)</li>
+<li>We will assume that errors are homoskedastic for simplicity and only focus on the time varying parameters</li>
+</ul>
+
+</article></slide><slide class=""><hgroup><h2>The TVP-VAR Model</h2></hgroup><article  id="the-tvp-var-model-1">
+
+<ul>
+<li>The TVP-VAR is expressed in this way: \[ Y_t =  Y_{t-1} \beta_t + \epsilon_t \]</li>
+<li>We let the parameters evolve according to an AR(1) process: \[ \beta_t = \beta_{t-1} + u_t \]</li>
+<li>All the variables have the same definitions that we saw in the normal VAR case</li>
+<li>The new variable is \(u_t \sim N(0,Q)\)</li>
+<li>Do you notice anything familiar about the setup of this model?</li>
+</ul>
+
+</article></slide><slide class=""><hgroup><h2>The TVP-VAR Model</h2></hgroup><article  id="the-tvp-var-model-2">
+
+<ul>
+<li>This is a state-space model:
+
+<ul>
+<li>The measurement equation is: \(Y_t = Y_{t-1} \beta_t + \epsilon_t\)</li>
+<li>The transition equation is: \(\beta_t = \beta_{t-1} + u_t\)</li>
+</ul></li>
+<li>When we think of Bayesian estimation of this model, we can use the same techniques that are used in Bayesian estimation of state-space models</li>
+</ul>
+
+</article></slide><slide class=""><hgroup><h2>Bayesian Estimation</h2></hgroup><article  id="bayesian-estimation">
+
+<ul>
+<li>Our parameters for this model: \(\Sigma\), Q
+
+<ul>
+<li>Well call these \(\theta\)</li>
+</ul></li>
+<li>Unknown objects of interest:
+
+<ul>
+<li>\(\theta\)</li>
+<li>\(\beta_t\)</li>
+</ul></li>
+<li>Our goal is to sample from \(P(\theta,\tilde{\beta}_T|\tilde{Y}_T)\)</li>
+</ul>
+
+</article></slide><slide class=""><hgroup><h2>MCMC Algorithm</h2></hgroup><article  id="mcmc-algorithm">
+
+<ul>
+<li>We will use a 3-step Gibbs sampler to accomplish our goal:
+
+<ul>
+<li>Step 1: Draw \(\Sigma\) from \(P(\Sigma|\tilde{\beta}_T^{g-1},\tilde{Y}_T)\), gives us \(\Sigma^g\)</li>
+<li>Step 2: Draw Q from \(P(Q|\tilde{\beta}_T^{g-1},\tilde{Y}_T)\), gives us \(Q^g\)</li>
+<li>Step 3: Draw \(\tilde{\beta}_T\) from \(P(\tilde{\beta}_T|\theta^g,\tilde{Y}_T)\), gives us \(\tilde{\beta}_T^g\)</li>
+</ul></li>
+<li>The process for steps 1 and 2 are laid out in Koop and Korobilis (2014)</li>
+<li>The process for step 3 follows Carter and Kohn (1994)</li>
+</ul>
+
+</article></slide><slide class=""><hgroup><h2>Step 1</h2></hgroup><article  id="step-1">
+
+<ul>
+<li>Sampling \(P(\theta|\tilde{\beta}_T^{g-1},\tilde{Y}_T)\)</li>
+<li>For \(\Sigma^{-1}\), our prior is a \(Wishart(S,v)\)</li>
+<li>After combining this with the marginal likelihood, the conditional posterior is: \[P(\Sigma^{-1}|\tilde{\beta}_T,\tilde{Y}_T) \sim Wishart(\bar{S}^{-1},\bar{v})\] \[\bar{v} = v + T\] \[\bar{S}^{-1} = S + \sum\limits_{t=2}^{T} (Y_t-Y_{t-1}^{&#39;}\beta_t)(Y_t-Y_{t-1}^{&#39;}\beta_t)&#39;\]
+
+<ul>
+<li>&quot;v&quot; and &quot;S&quot; are hyperparameters</li>
+</ul></li>
+</ul>
+
+</article></slide><slide class=""><hgroup><h2>Step 2</h2></hgroup><article  id="step-2">
+
+<ul>
+<li>Sampling \(P(\theta|\tilde{\beta}_T^{g-1},\tilde{Y}_T)\)</li>
+<li>For \(Q^{-1}\), our prior is also a \(Wishart(S_Q,v_Q)\)</li>
+<li>After combining this with the marginal likelihood, the conditional posterior is: \[P(Q^{-1}|\tilde{\beta}_T,\tilde{Y}_T) \sim Wishart(\bar{S}_Q^{-1},\bar{v}_Q)\] \[\bar{v}_Q = v_Q + T\] \[\bar{S}_Q^{-1} = S_Q + \sum\limits_{t=1}^{T} (\beta_{t+1}-I\beta_t)(\beta_{t+1}-I\beta_t)&#39;\]
+
+<ul>
+<li>&quot;\(v_Q\)&quot; and &quot;\(S_Q\)&quot; are hyperparameters</li>
+</ul></li>
+</ul>
+
+</article></slide><slide class=""><hgroup><h2>Step 3</h2></hgroup><article  id="step-3">
+
+<ul>
+<li>Sampling \(P(\tilde{\beta}_T|\theta^g,\tilde{Y}_T)\)</li>
+<li>To begin: \[ P(\tilde{\beta}_T|\theta,\tilde{Y}_T) = P(\beta_1,...,\beta_T|\theta,\tilde{Y}_T) \] \[ = P(\beta_1|\beta_2,...,\beta_T,\theta,\tilde{Y}_T) ... P(\beta_{T-1}|\beta_T,\theta,\tilde{Y}_T)P(\beta_T|\theta,\tilde{Y}_T) \]</li>
+</ul>
+
+</article></slide><slide class=""><hgroup><h2>Step 3</h2></hgroup><article  id="step-3-1">
+
+<ul>
+<li>Recall that \(\beta_t\) is an AR(1) process with an iid disturbance vector, therefore:
+
+<ul>
+<li>Given \(\beta_{t+1}\), the pdf of \(\beta_t\) does not depend on \(\beta_{t+2},...,\beta_T\)</li>
+<li>Conditional on \(\tilde{Y}_T\), then \(Y_{t+1},...,Y_T\) contains no additional information about \(\beta_t\)</li>
+</ul></li>
+<li>This means that: \[P(\tilde{\beta}_T|\theta,\tilde{Y}_T)=\] \[P(\beta_1|\beta_2,\theta,\tilde{Y}_1)...P(\beta_{T-1}|\beta_T,\theta,\tilde{Y}_{T-1})P(\beta_T|\theta,\tilde{Y}_T)\]</li>
+</ul>
+
+</article></slide><slide class=""><hgroup><h2>Step 3</h2></hgroup><article  id="step-3-2">
+
+<ul>
+<li>This means we can draw from \(P(\tilde{\beta}_T|\theta,\tilde{Y}_T)\) as follows:
+
+<ul>
+<li>Step 1: Draw \(\beta_T\) from \(P(\beta_T|\theta,\tilde{Y}_T)\)</li>
+<li>Step 2: Draw \(\beta_{T-1}\) from \(P(\beta_{T-1}|\beta_T,\theta,\tilde{Y}_{T-1})\)</li>
+<li>and so forth &#8230;</li>
+<li>Step T: Draw \(\beta_1\) from \(P(\beta_1|\beta_2,\theta,\tilde{Y}_1)\)</li>
+</ul></li>
+<li>If we need it, we can also draw \(\beta_0\) from \(P(\beta_0|\beta_1,\theta,\tilde{Y}_0)\)</li>
+</ul>
+
+</article></slide><slide class=""><hgroup><h2>Step 3</h2></hgroup><article  id="step-3-3">
+
+<ul>
+<li>How do we take these draws?</li>
+<li>From our time-series class, we know that: \[ P(\beta_t|\theta,\tilde{Y}_t)=N(\beta_{tt},V_{tt}) \] \[ \beta_{tt}=E(\beta_t|\theta,\tilde{Y}_t) \] \[ V_{tt}=Var(\beta_t|\theta,\tilde{Y}_t) \]</li>
+<li>\(\beta_{tt}\) and \(V_{tt}\) we get from the Kalman Filter
+
+<ul>
+<li>Therefore, we can get \(\beta_{TT}\) and \(V_{TT}\) from the final step of the Kalman Filter and then draw \(X_T\) from \(N(\beta_{TT},V_{TT})\)</li>
+</ul></li>
+</ul>
+
+</article></slide><slide class=""><hgroup><h2>Step 3</h2></hgroup><article  id="step-3-4">
+
+<ul>
+<li>What about the rest of the steps 2-T? \[ P(\beta_t|\beta_{t+1},\theta,\tilde{Y}_t)=N(E(\beta_t|\beta_{t+1},\theta,\tilde{Y}_t),Var(\beta_t|\beta_{t+1},\theta,\tilde{Y}_t)) \] \[ E(\beta_t|\beta_{t+1},\theta,\tilde{Y}_t)=\beta_{tt}+V_{tt}(V_{tt}+Q)^{-1}(\beta_{t+1}-\beta_{tt}) \] \[ Var(\beta_t|\beta_{t+1},\theta,\tilde{Y}_t)=V_{tt}-V_{tt}(V_{tt}+Q)^{-1} \]</li>
+</ul>
+
+</article></slide><slide class=""><hgroup><h2>Other Items fof Note</h2></hgroup><article  id="other-items-fof-note">
+
+<ul>
+<li>Training Sample
+
+<ul>
+<li>Designating an early part of your data to estimate what your priors should be</li>
+</ul></li>
+<li>Minnesota Prior
+
+<ul>
+<li>Rather than have the TE be AR(1), we can combine it with the Minnesota Prior: \[ \beta_t=A_0\beta_{t-1} + (I-A_0)\bar{\beta}_0+u_t \]</li>
+<li>&quot;A&quot; is something we can set or we could add another block into our Gibbs sampler</li>
+</ul></li>
+</ul></article></slide>
 
 
   <slide class="backdrop"></slide>
