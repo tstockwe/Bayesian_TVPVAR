@@ -133,7 +133,7 @@ $$ P(\beta_t|\beta_{t+1},\theta,\tilde{Y}_t)=N(E(\beta_t|\beta_{t+1},\theta,\til
 	$$ E(\beta_t|\beta_{t+1},\theta,\tilde{Y}_t)=\beta_{tt}+V_{tt}(V_{tt}+Q)^{-1}(\beta_{t+1}-\beta_{tt}) $$
 	$$ Var(\beta_t|\beta_{t+1},\theta,\tilde{Y}_t)=V_{tt}-V_{tt}(V_{tt}+Q)^{-1} $$
 	
-## Other Items fof Note
+## Other Items of Note
 
 - Training Sample
     + Designating an early part of your data to estimate what your priors should be
